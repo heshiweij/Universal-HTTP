@@ -39,16 +39,14 @@ public class HttpUrlConnectionUtils {
 
 		RequestMethod requestMethod = request.getMethod();
 		switch (requestMethod) {
+		case DELETE:
 		case GET:
 			return get(request);
+		case PUT:
 		case POST:
 			return post(request);
-		case PUT:
-			return null;
-		case DELETE:
-			return null;
 		}
-		
+
 		return null;
 	}
 

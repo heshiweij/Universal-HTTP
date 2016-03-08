@@ -18,6 +18,11 @@ public class Request {
 	/** «Î«Û∑Ω∑® */
 	private RequestMethod method;
 
+	public Request(){
+		url = null;
+		method = RequestMethod.GET;
+	}
+	
 	public Request(String url, RequestMethod method){
 		this.url =url;
 		this.method = method;

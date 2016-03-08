@@ -67,7 +67,10 @@ public class MainActivity extends Activity {
 		headers.put("Content-Type", "application/json");
 		String content = "{\"name\":\"hsw\"}";
 		
-		Request request = new Request("http://httpbin.org/post", RequestMethod.POST);
+//		Request request = new Request("http://httpbin.org/post", RequestMethod.POST);
+		Request request = new Request();
+		request.setUrl("http://httpbin.org/post");
+		request.setMethod(RequestMethod.POST);
 		request.setHeaders(headers);
 		request.setContent(content);
 		
