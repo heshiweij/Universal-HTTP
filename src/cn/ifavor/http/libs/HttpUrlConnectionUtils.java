@@ -1,6 +1,7 @@
 package cn.ifavor.http.libs;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -9,6 +10,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import android.text.TextUtils;
 
 public class HttpUrlConnectionUtils {
 	/** 连接超时时间(秒) */
@@ -33,9 +36,9 @@ public class HttpUrlConnectionUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String get(String sUrl, Map<String, String> headers)
+	public static String get(Request request)
 			throws Exception {
-		URL url = new URL(sUrl);
+		URL url = new URL(request.getUrl());
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
 		conn.setRequestMethod("GET");
@@ -45,7 +48,7 @@ public class HttpUrlConnectionUtils {
 		// conn.setDoOutput(true);
 
 		// 添加头信息
-		addHeaders(headers, conn);
+		addHeaders(request.getHeaders(), conn);
 
 		int statusCode = conn.getResponseCode();
 
@@ -99,9 +102,8 @@ public class HttpUrlConnectionUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String post(String sUrl, String content,
-			Map<String, String> headers) throws Exception {
-		URL url = new URL(sUrl);
+	public static String post(Request request) throws Exception {
+		URL url = new URL(request.getUrl());
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
 		conn.setRequestMethod("POST");
@@ -113,11 +115,10 @@ public class HttpUrlConnectionUtils {
 		conn.setDoInput(true);
 
 		// 添加头信息
-		addHeaders(headers, conn);
+		addHeaders(request.getHeaders(), conn);
 
 		// 添加报文内容
-		OutputStream os = conn.getOutputStream();
-		os.write(content.getBytes());
+		addContent(conn, request);
 
 		int statusCode = conn.getResponseCode();
 
@@ -135,5 +136,21 @@ public class HttpUrlConnectionUtils {
 		}
 
 		return null;
+	}
+
+	/**
+	 * 添加报文内容
+	 * @param conn
+	 * @param request
+	 * @throws IOException
+	 */
+	private static void addContent(HttpURLConnection conn, Request request)
+			throws IOException {
+		if (request == null || TextUtils.isEmpty(request.getContent())){
+			return;
+		}
+		
+		OutputStream os = conn.getOutputStream();
+		os.write(request.getContent().getBytes());
 	}
 }

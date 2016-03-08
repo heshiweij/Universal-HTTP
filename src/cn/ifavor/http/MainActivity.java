@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cn.ifavor.http.libs.HttpUrlConnectionUtils;
+import cn.ifavor.http.libs.Request;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -50,12 +51,12 @@ public class MainActivity extends Activity {
 	}
 
 	private void testGet() throws Exception {
-		Map<String, String> headers = new HashMap<String, String>();
-		headers.put("user-agent", "heshiwei");
-		headers.put("age", "0");
-		
-		String res = HttpUrlConnectionUtils.get("http://httpbin.org/get", headers);
-		System.out.println(res);
+//		Map<String, String> headers = new HashMap<String, String>();
+//		headers.put("user-agent", "heshiwei");
+//		headers.put("age", "0");
+//		
+//		String res = HttpUrlConnectionUtils.get("http://httpbin.org/get", headers);
+//		System.out.println(res);
 	}
 
 	private void testPost() throws Exception {
@@ -63,10 +64,14 @@ public class MainActivity extends Activity {
 		headers.put("user-agent", "heshiwei");
 		headers.put("age", "0");
 		headers.put("Content-Type", "application/json");
-		
 		String content = "{\"name\":\"hsw\"}";
 		
-		String res = HttpUrlConnectionUtils.post("http://httpbin.org/post",content, headers);
+		Request request = new Request();
+		request.setHeaders(headers);
+		request.setUrl("http://httpbin.org/post");
+		request.setContent(content);
+		
+		String res = HttpUrlConnectionUtils.post(request);
 		System.out.println(res);
 	}
 }
