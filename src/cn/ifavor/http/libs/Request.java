@@ -2,6 +2,8 @@ package cn.ifavor.http.libs;
 
 import java.util.Map;
 
+import cn.ifavor.http.libs.callback.ICallback;
+
 public class Request {
 	/** 请求方法枚举 */
 	public enum RequestMethod{GET,POST,PUT,DELETE};
@@ -17,20 +19,29 @@ public class Request {
 	
 	/** 请求方法 */
 	private RequestMethod method;
+	
+	/** 请求结果回调 */
+	private ICallback callback;
 
 	public Request(){
 		url = null;
 		method = RequestMethod.GET;
 	}
 	
-	public Request(String url, RequestMethod method){
-		this.url =url;
-		this.method = method;
-	}
-	
 	public Request(String url){
 		this(url, RequestMethod.GET);
 	}
+	
+	public Request(String url, RequestMethod method){
+		this(url, method, null);
+	}
+	
+	public Request(String url, RequestMethod method, ICallback callback){
+		this.url =url;
+		this.method = method;
+		this.callback = callback;
+	}
+	
 	
 	public String getUrl() {
 		return url;
@@ -62,5 +73,13 @@ public class Request {
 
 	public void setMethod(RequestMethod method) {
 		this.method = method;
+	}
+
+	public ICallback getCallback() {
+		return callback;
+	}
+
+	public void setCallback(ICallback callback) {
+		this.callback = callback;
 	}
 }

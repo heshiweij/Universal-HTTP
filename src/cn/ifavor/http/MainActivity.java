@@ -11,10 +11,13 @@ import java.util.Map;
 
 import cn.ifavor.http.libs.HttpUrlConnectionUtils;
 import cn.ifavor.http.libs.Request;
+import cn.ifavor.http.libs.RequestTask;
 import cn.ifavor.http.libs.Request.RequestMethod;
+import cn.ifavor.http.libs.callback.ICallback;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.sax.TextElementListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,9 +42,17 @@ public class MainActivity extends Activity {
 
 					@Override
 					public void run() {
+//						try {
+////							testGet();
+////							testPost();
+////							testExecute();
+//							onSubThreadExecute();
+//						} catch (Exception e) {
+//							e.printStackTrace();
+//						}
+						
 						try {
-//							testGet();
-							testPost();
+							onSubThreadExecute();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -51,16 +62,42 @@ public class MainActivity extends Activity {
 		});
 	}
 
+	/** 测试 get */
 	private void testGet() throws Exception {
-//		Map<String, String> headers = new HashMap<String, String>();
-//		headers.put("user-agent", "heshiwei");
-//		headers.put("age", "0");
-//		
-//		String res = HttpUrlConnectionUtils.get("http://httpbin.org/get", headers);
-//		System.out.println(res);
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("user-agent", "heshiwei");
+		headers.put("age", "0");
+		
+		Request request = new Request();
+		request.setUrl("http://httpbin.org/get");
+		request.setMethod(RequestMethod.GET);
+		request.setHeaders(headers);
+		
+		String res = HttpUrlConnectionUtils.get(request);
+		System.out.println(res);
 	}
 
+	/** 测试 post  */
 	private void testPost() throws Exception {
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("user-agent", "heshiwei");
+		headers.put("age", "0");
+		headers.put("Content-Type", "application/json");
+		String content = "{\"name\":\"hsw\"}";
+		
+//		Request request = new Request("http://httpbin.org/post", RequestMethod.POST);
+		Request request = new Request();
+		request.setUrl("http://httpbin.org/post");
+		request.setMethod(RequestMethod.POST);
+		request.setHeaders(headers);
+		request.setContent(content);
+		
+		String res = HttpUrlConnectionUtils.post(request);
+		System.out.println(res);
+	}
+	
+	/** 测试 execute  */
+	private void testExecute() throws Exception {
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("user-agent", "heshiwei");
 		headers.put("age", "0");
@@ -77,5 +114,43 @@ public class MainActivity extends Activity {
 //		String res = HttpUrlConnectionUtils.post(request);
 		String res = HttpUrlConnectionUtils.execute(request);
 		System.out.println(res);
+	}
+	
+	/** 测试在子线程运行 */
+	private void onSubThreadExecute() throws Exception {
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("user-agent", "heshiwei");
+		headers.put("age", "0");
+		headers.put("Content-Type", "application/json");
+		String content = "{\"name\":\"hsw\"}";
+		
+		Request request = new Request();
+//		request.setUrl("http://httpbin.org/post");
+		request.setMethod(RequestMethod.POST);
+		request.setHeaders(headers);
+		request.setContent(content);
+		
+		// 设置 callback
+		request.setCallback(new ICallback() {
+			
+			@Override
+			public void onPre() {
+				System.out.println("onPre");
+			}
+			
+			@Override
+			public void onSuccess(String result) {
+				System.out.println(result);
+			}
+			
+			@Override
+			public void onFail(Exception ex) {
+				System.out.println(ex.getMessage());
+			}
+		});
+		
+		// 执行请求
+		RequestTask task = new RequestTask(request);
+		task.execute();
 	}
 }
