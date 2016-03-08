@@ -11,6 +11,7 @@ import java.util.Map;
 
 import cn.ifavor.http.libs.HttpUrlConnectionUtils;
 import cn.ifavor.http.libs.Request;
+import cn.ifavor.http.libs.Request.RequestMethod;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -66,12 +67,12 @@ public class MainActivity extends Activity {
 		headers.put("Content-Type", "application/json");
 		String content = "{\"name\":\"hsw\"}";
 		
-		Request request = new Request();
+		Request request = new Request("http://httpbin.org/post", RequestMethod.POST);
 		request.setHeaders(headers);
-		request.setUrl("http://httpbin.org/post");
 		request.setContent(content);
 		
-		String res = HttpUrlConnectionUtils.post(request);
+//		String res = HttpUrlConnectionUtils.post(request);
+		String res = HttpUrlConnectionUtils.execute(request);
 		System.out.println(res);
 	}
 }

@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import cn.ifavor.http.libs.Request.RequestMethod;
+
 import android.text.TextUtils;
 
 public class HttpUrlConnectionUtils {
@@ -26,6 +28,30 @@ public class HttpUrlConnectionUtils {
 	/** HTTP 响应状态码-成功 */
 	private static final int HTTP_STATUS_CODE_SUCCESS = 200;
 
+	public static String execute(Request request) throws Exception {
+		if (request == null) {
+			throw new IllegalStateException("请求对象不能为空");
+		}
+
+		if (TextUtils.isEmpty(request.getUrl())) {
+			throw new IllegalStateException("请求URL不能为空");
+		}
+
+		RequestMethod requestMethod = request.getMethod();
+		switch (requestMethod) {
+		case GET:
+			return get(request);
+		case POST:
+			return post(request);
+		case PUT:
+			return null;
+		case DELETE:
+			return null;
+		}
+		
+		return null;
+	}
+
 	/**
 	 * get 请求
 	 * 
@@ -36,8 +62,7 @@ public class HttpUrlConnectionUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String get(Request request)
-			throws Exception {
+	public static String get(Request request) throws Exception {
 		URL url = new URL(request.getUrl());
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
@@ -69,17 +94,18 @@ public class HttpUrlConnectionUtils {
 	}
 
 	/**
-	 *  添加头信息
-	 * @param headers 
-	 * @param conn 
+	 * 添加头信息
+	 * 
+	 * @param headers
+	 * @param conn
 	 */
 	private static void addHeaders(Map<String, String> headers,
 			HttpURLConnection conn) {
 
-		if (headers == null || headers.size() <= 0){
+		if (headers == null || headers.size() <= 0) {
 			return;
 		}
-		
+
 		Set<Map.Entry<String, String>> entrySet = headers.entrySet();
 		StringBuilder sb = new StringBuilder();
 		for (Iterator<Map.Entry<String, String>> it = entrySet.iterator(); it
@@ -140,16 +166,17 @@ public class HttpUrlConnectionUtils {
 
 	/**
 	 * 添加报文内容
+	 * 
 	 * @param conn
 	 * @param request
 	 * @throws IOException
 	 */
 	private static void addContent(HttpURLConnection conn, Request request)
 			throws IOException {
-		if (request == null || TextUtils.isEmpty(request.getContent())){
+		if (request == null || TextUtils.isEmpty(request.getContent())) {
 			return;
 		}
-		
+
 		OutputStream os = conn.getOutputStream();
 		os.write(request.getContent().getBytes());
 	}
