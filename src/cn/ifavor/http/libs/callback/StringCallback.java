@@ -1,7 +1,5 @@
 package cn.ifavor.http.libs.callback;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Created by Administrator on 2016/2/29.

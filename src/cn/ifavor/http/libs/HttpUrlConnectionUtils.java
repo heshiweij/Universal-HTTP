@@ -88,7 +88,6 @@ public class HttpUrlConnectionUtils {
 		}
 
 		Set<Map.Entry<String, String>> entrySet = headers.entrySet();
-		StringBuilder sb = new StringBuilder();
 		for (Iterator<Map.Entry<String, String>> it = entrySet.iterator(); it
 				.hasNext();) {
 			Entry<String, String> next = it.next();

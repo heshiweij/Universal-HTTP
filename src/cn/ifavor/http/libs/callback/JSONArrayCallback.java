@@ -1,13 +1,6 @@
 package cn.ifavor.http.libs.callback;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 
 /**
  * Created by Administrator on 2016/2/29.

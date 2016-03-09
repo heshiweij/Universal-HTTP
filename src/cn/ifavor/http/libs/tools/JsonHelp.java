@@ -5,7 +5,7 @@ import java.lang.reflect.Type;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class JsonHelp {
+public class JSONHelp {
 
 	private static Gson gson = new GsonBuilder().create(); 
 	

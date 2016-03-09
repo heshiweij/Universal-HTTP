@@ -1,38 +1,43 @@
 package cn.ifavor.http.libs.callback;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 
-import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.TextUtils;
 
 import cn.ifavor.http.libs.HttpUrlConnectionUtils;
 import cn.ifavor.http.libs.listener.OnProgressUpdateListener;
 
-public abstract class AbstractCallback<T> implements ICallback<T>{
-	@Override
-	public void onPre() {
+public abstract class FileCallback extends AbstractCallback<File>{
+
+	private File mFile;
+	
+	public FileCallback(File file){
+		if (file == null){
+			throw new IllegalStateException("文件不能为 null");
+		}
 		
+		this.mFile = file;
 	}
 	
 	@Override
-	public T parse(HttpURLConnection connection) throws Exception {
-		return parse(connection, null);
-	}
-	
-	@Override
-	public T parse(HttpURLConnection connection, OnProgressUpdateListener listener) throws Exception {
+	public File parse(HttpURLConnection connection,
+			OnProgressUpdateListener listener) throws Exception {
 		int statusCode = connection.getResponseCode();
 		if (statusCode == HttpUrlConnectionUtils.HTTP_STATUS_CODE_SUCCESS) {
 				InputStream is = connection.getInputStream();
 				int current = 0;
 				int total = connection.getContentLength();
+				System.out.println("getContentLength: " + total);
 				
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				FileOutputStream fos = new FileOutputStream(mFile);
 				byte[] buffer = new byte[HttpUrlConnectionUtils.BUFFER_SIZE];
 				int len = 0;
 				while ((len = is.read(buffer)) != -1) {
-					baos.write(buffer, 0, len);
+					fos.write(buffer, 0, len);
 					
 					current += len;
 					
@@ -43,20 +48,18 @@ public abstract class AbstractCallback<T> implements ICallback<T>{
 				
 				// 关闭流
 				is.close();
-				baos.flush();
-				baos.close();
+				fos.flush();
+				fos.close();
 
-				String result = new String(baos.toByteArray());
-				return bindData(result);
+				return bindData(mFile.getAbsolutePath());
 		}
 		
 		return null;
 	}
-
-	public abstract T bindData(String s) throws Exception;
 	
 	@Override
-	public void onProgress(int current, int total) {
-		
+	public File bindData(String s) throws Exception {
+		return mFile;
 	}
+	
 }

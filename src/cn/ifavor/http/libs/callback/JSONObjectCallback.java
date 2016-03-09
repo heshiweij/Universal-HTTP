@@ -1,8 +1,5 @@
 package cn.ifavor.http.libs.callback;
 
-import java.net.HttpURLConnection;
-
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
