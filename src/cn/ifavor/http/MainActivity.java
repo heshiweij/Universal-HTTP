@@ -1,44 +1,22 @@
 package cn.ifavor.http;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONObject;
-
-import com.google.gson.JsonObject;
-
-import cn.ifavor.http.bean.User;
-import cn.ifavor.http.libs.HttpUrlConnectionUtils;
-import cn.ifavor.http.libs.Request;
-import cn.ifavor.http.libs.RequestTask;
-import cn.ifavor.http.libs.Request.RequestMethod;
-import cn.ifavor.http.libs.callback.ICallback;
-import cn.ifavor.http.libs.callback.impl.FileCallback;
-import cn.ifavor.http.libs.callback.impl.JSONCallback;
-import cn.ifavor.http.libs.callback.impl.JSONObjectCallback;
-import cn.ifavor.http.libs.callback.impl.StringCallback;
-import cn.ifavor.http.libs.exception.AppException;
-
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.os.Bundle;
-import android.os.Environment;
-import android.sax.TextElementListener;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+import cn.ifavor.http.base.BaseActivity;
+import cn.ifavor.http.libs.Request;
+import cn.ifavor.http.libs.Request.RequestMethod;
+import cn.ifavor.http.libs.RequestTask;
+import cn.ifavor.http.libs.callback.impl.StringCallback;
+import cn.ifavor.http.libs.exception.AppException;
+import cn.ifavor.http.libs.listener.OnGlobalExceptionListener;
 
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
 
 	private Button mBtnRequest;
 	private TextView mTvProgress;
@@ -75,7 +53,8 @@ public class MainActivity extends Activity {
 //							onSubThreadJSONArrayCallback();
 //							onSubThreadProgressUpdate();
 //							onSubThreadFillCallback();
-							onSubThreadAppException();
+//							onSubThreadAppException();
+							onSubThreadonGlobalExceptionListener();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -378,6 +357,7 @@ public class MainActivity extends Activity {
 	}
 	*/
 	
+	/** 测试 AppException */
 	private void onSubThreadAppException(){
 		Request request = new Request();
 		request.setUrl("sshttp://httpbin.org/get");
@@ -401,5 +381,42 @@ public class MainActivity extends Activity {
 		// 执行请求
 		RequestTask task = new RequestTask(request);
 		task.execute();
+	}
+	
+	/** 测试 onGlobalExceptionListener 全局异常 */
+	private void onSubThreadonGlobalExceptionListener(){
+		Request request = new Request();
+		request.setUrl("http://httpbin.org/get");
+		request.setMethod(RequestMethod.POST);
+		request.setEnableProgressUpdate(true);
+		
+		request.setOnGlobalExceptionListener(this);
+		
+		// 设置 callback
+		request.setCallback(new StringCallback() {
+			
+			@Override
+			public void onSuccess(String result) {
+				System.out.println("成功回调");
+			}
+			
+			@Override
+			public void onFail(AppException ex) {
+				System.out.println("onFail: "+ ex.getMessage());
+			}
+		});
+		
+		// 执行请求
+		RequestTask task = new RequestTask(request);
+		task.execute();
+	}
+
+	@Override
+	public boolean handlerException(AppException ex) {
+		AlertDialog.Builder builder = new Builder(MainActivity.this);
+		builder.setMessage(ex.getMessage());
+		AlertDialog create = builder.create();
+		create.show();
+		return false;
 	}
 }

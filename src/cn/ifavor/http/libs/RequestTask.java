@@ -65,7 +65,16 @@ public class RequestTask extends AsyncTask<Void, Integer, Object> {
 	protected void onPostExecute(Object result) {
 		if (result instanceof Exception) {
 			// 失败
-			mRequest.getCallback().onFail((AppException) result);
+			// 说明:
+			// 1. 全部的异常先用 getOnGlobalExceptionListener 过滤一遍，看看有没有要处理的
+			//     然后交给mRequest.getCallback().onFail();
+			// 2. handlerException 返回 true 表示消费了异常，不需要 onFail 处理，否则需要 onFail 处理
+			if (mRequest.getOnGlobalExceptionListener() != null){
+				if (!mRequest.getOnGlobalExceptionListener().handlerException((AppException) result)){
+					mRequest.getCallback().onFail((AppException) result);
+				}
+			}
+			
 		} else {
 			// 成功
 			// 说明：

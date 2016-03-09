@@ -3,6 +3,7 @@ package cn.ifavor.http.libs;
 import java.util.Map;
 
 import cn.ifavor.http.libs.callback.ICallback;
+import cn.ifavor.http.libs.listener.OnGlobalExceptionListener;
 
 public class Request {
 	/** 请求方法枚举 */
@@ -25,7 +26,11 @@ public class Request {
 	/** 请求结果回调 */
 	private ICallback callback;
 
+	/** 是否需要更新进度 */
 	private boolean isEnableProgressUpdate;
+
+	/** 全局异常监听 */
+	private OnGlobalExceptionListener onGlobalExceptionListener;
 
 	public Request() {
 		url = null;
@@ -99,6 +104,15 @@ public class Request {
 
 	public void setEnableProgressUpdate(boolean isEnableProgressUpdate) {
 		this.isEnableProgressUpdate = isEnableProgressUpdate;
+	}
+
+	public void setOnGlobalExceptionListener(
+			OnGlobalExceptionListener onGlobalExceptionListener) {
+		this.onGlobalExceptionListener = onGlobalExceptionListener;
+	}
+
+	public OnGlobalExceptionListener getOnGlobalExceptionListener() {
+		return onGlobalExceptionListener;
 	}
 
 }

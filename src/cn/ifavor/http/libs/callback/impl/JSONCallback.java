@@ -19,7 +19,7 @@ public abstract class JSONCallback<T> extends AbstractCallback<T>{
 		Class<T> objClass = getObjClass();
 		
 		// 解析 JSON
-		return JSONHelp.json2Bean(s, objClass);
+		return JSONHelp.json2Bean(s, null);
 	}
 	
 	/** 根据泛型获取其 Class<T> 对象 */
