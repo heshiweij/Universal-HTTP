@@ -1,9 +1,13 @@
 package cn.ifavor.http.libs.callback;
 
-public interface ICallback {
+import java.net.HttpURLConnection;
+
+public interface ICallback<T> {
 	void onPre();
 	
-	void onSuccess(String result);
+	void onSuccess(T result);
 	
 	void onFail(Exception ex);
+
+	T parse(HttpURLConnection connection) throws Exception;
 }

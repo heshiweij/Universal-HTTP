@@ -9,11 +9,13 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.ifavor.http.bean.User;
 import cn.ifavor.http.libs.HttpUrlConnectionUtils;
 import cn.ifavor.http.libs.Request;
 import cn.ifavor.http.libs.RequestTask;
 import cn.ifavor.http.libs.Request.RequestMethod;
 import cn.ifavor.http.libs.callback.ICallback;
+import cn.ifavor.http.libs.callback.JSONCallback;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -52,18 +54,20 @@ public class MainActivity extends Activity {
 //						}
 						
 						try {
-							onSubThreadExecute();
+//							onSubThreadExecute();
+							onSubThreadJsonCallback();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					}
+
 				}).start();
 			}
 		});
 	}
 
 	/** 测试 get */
-	private void testGet() throws Exception {
+/*	private void testGet() throws Exception {
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("user-agent", "heshiwei");
 		headers.put("age", "0");
@@ -75,10 +79,10 @@ public class MainActivity extends Activity {
 		
 		String res = HttpUrlConnectionUtils.get(request);
 		System.out.println(res);
-	}
+	}*/
 
 	/** 测试 post  */
-	private void testPost() throws Exception {
+/*	private void testPost() throws Exception {
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("user-agent", "heshiwei");
 		headers.put("age", "0");
@@ -94,10 +98,10 @@ public class MainActivity extends Activity {
 		
 		String res = HttpUrlConnectionUtils.post(request);
 		System.out.println(res);
-	}
+	}*/
 	
 	/** 测试 execute  */
-	private void testExecute() throws Exception {
+	/*private void testExecute() throws Exception {
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("user-agent", "heshiwei");
 		headers.put("age", "0");
@@ -114,10 +118,10 @@ public class MainActivity extends Activity {
 //		String res = HttpUrlConnectionUtils.post(request);
 		String res = HttpUrlConnectionUtils.execute(request);
 		System.out.println(res);
-	}
+	}*/
 	
 	/** 测试在子线程运行 */
-	private void onSubThreadExecute() throws Exception {
+	/*private void onSubThreadExecute() throws Exception {
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("user-agent", "heshiwei");
 		headers.put("age", "0");
@@ -125,13 +129,13 @@ public class MainActivity extends Activity {
 		String content = "{\"name\":\"hsw\"}";
 		
 		Request request = new Request();
-//		request.setUrl("http://httpbin.org/post");
+		request.setUrl("http://httpbin.org/post");
 		request.setMethod(RequestMethod.POST);
 		request.setHeaders(headers);
 		request.setContent(content);
 		
 		// 设置 callback
-		request.setCallback(new ICallback() {
+		request.setCallback(new ICallback<String>() {
 			
 			@Override
 			public void onPre() {
@@ -147,6 +151,39 @@ public class MainActivity extends Activity {
 			public void onFail(Exception ex) {
 				System.out.println(ex.getMessage());
 			}
+		});
+		
+		// 执行请求
+		RequestTask task = new RequestTask(request);
+		task.execute();
+	}*/
+	
+	private void onSubThreadJsonCallback() {
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("user-agent", "heshiwei");
+		headers.put("age", "0");
+		headers.put("Content-Type", "application/json");
+		String content = "{\"name\":\"hsw\"}";
+		
+		Request request = new Request();
+		request.setUrl("http://httpbin.org/post");
+		request.setMethod(RequestMethod.POST);
+		request.setHeaders(headers);
+		request.setContent(content);
+		
+		// 设置 callback
+		request.setCallback(new JSONCallback<User>(){
+			
+			@Override
+			public void onSuccess(User result) {
+				System.out.println(result);
+			}
+			
+			@Override
+			public void onFail(Exception ex) {
+				System.out.println(ex.getMessage());
+			}
+			
 		});
 		
 		// 执行请求

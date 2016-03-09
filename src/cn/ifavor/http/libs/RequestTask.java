@@ -1,5 +1,7 @@
 package cn.ifavor.http.libs;
 
+import java.net.HttpURLConnection;
+
 import android.os.AsyncTask;
 
 /***
@@ -20,6 +22,10 @@ public class RequestTask extends AsyncTask<Void, Integer, Object>{
 			throw new NullPointerException("Request 不能为 null");
 		}
 		
+		if (request.getCallback() == null){
+			throw new NullPointerException("Callback 不能为 null");
+		}
+		
 		this.mRequest = request;
 	}
 	
@@ -33,7 +39,9 @@ public class RequestTask extends AsyncTask<Void, Integer, Object>{
 	@Override
 	protected Object doInBackground(Void... params) {
 		try {
-			return HttpUrlConnectionUtils.execute(mRequest);
+			HttpURLConnection connection = HttpUrlConnectionUtils.execute(mRequest);
+			return mRequest.getCallback().parse(connection);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e;
@@ -42,14 +50,15 @@ public class RequestTask extends AsyncTask<Void, Integer, Object>{
 	
 	@Override
 	protected void onPostExecute(Object result) {
-		if (result instanceof String){
-			// 成功
-			if (mRequest.getCallback() != null){
-				mRequest.getCallback().onSuccess((String) result);
-			}
-		} else if (result instanceof Exception){
+		if (result instanceof Exception){
 			// 失败
 			mRequest.getCallback().onFail((Exception) result);
+		} else {
+			// 成功
+			// 说明：
+			// 1. 只要不是 Exception 就是成功，成功返回的数据
+			// 2. 成功后返回的数据可能是 String 和 T(在 JSONCallback 自定义的泛型)
+			mRequest.getCallback().onSuccess( result);
 		} 
 	}
 	

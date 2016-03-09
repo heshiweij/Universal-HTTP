@@ -17,18 +17,18 @@ import android.text.TextUtils;
 
 public class HttpUrlConnectionUtils {
 	/** 连接超时时间(秒) */
-	private static final int CONNTENT_TIME_SECONDS = 15;
+	public static final int CONNTENT_TIME_SECONDS = 15;
 
 	/** 读取超时时间(秒) */
-	private static final int READ_TIME_SECONDS = 5;
+	public static final int READ_TIME_SECONDS = 5;
 
 	/** 读取缓存区的大小 */
-	private static final int BUFFER_SIZE = 2 * 1024;
+	public static final int BUFFER_SIZE = 2 * 1024;
 
 	/** HTTP 响应状态码-成功 */
-	private static final int HTTP_STATUS_CODE_SUCCESS = 200;
+	public static final int HTTP_STATUS_CODE_SUCCESS = 200;
 
-	public static String execute(Request request) throws Exception {
+	public static HttpURLConnection execute(Request request) throws Exception {
 		if (request == null) {
 			throw new IllegalStateException("请求对象不能为空");
 		}
@@ -60,7 +60,7 @@ public class HttpUrlConnectionUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String get(Request request) throws Exception {
+	public static HttpURLConnection get(Request request) throws Exception {
 		URL url = new URL(request.getUrl());
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
@@ -73,22 +73,8 @@ public class HttpUrlConnectionUtils {
 		// 添加头信息
 		addHeaders(request.getHeaders(), conn);
 
-		int statusCode = conn.getResponseCode();
+		return conn;
 
-		if (statusCode == HTTP_STATUS_CODE_SUCCESS) {
-			InputStream is = conn.getInputStream();
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			byte[] buffer = new byte[BUFFER_SIZE];
-			int len = 0;
-			while ((len = is.read(buffer)) != -1) {
-				baos.write(buffer, 0, len);
-			}
-
-			String res = new String(baos.toByteArray());
-			return res;
-		}
-
-		return null;
 	}
 
 	/**
@@ -126,7 +112,7 @@ public class HttpUrlConnectionUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String post(Request request) throws Exception {
+	public static HttpURLConnection post(Request request) throws Exception {
 		URL url = new URL(request.getUrl());
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
@@ -144,22 +130,7 @@ public class HttpUrlConnectionUtils {
 		// 添加报文内容
 		addContent(conn, request);
 
-		int statusCode = conn.getResponseCode();
-
-		if (statusCode == HTTP_STATUS_CODE_SUCCESS) {
-			InputStream is = conn.getInputStream();
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			byte[] buffer = new byte[BUFFER_SIZE];
-			int len = 0;
-			while ((len = is.read(buffer)) != -1) {
-				baos.write(buffer, 0, len);
-			}
-
-			String res = new String(baos.toByteArray());
-			return res;
-		}
-
-		return null;
+		return conn;
 	}
 
 	/**
