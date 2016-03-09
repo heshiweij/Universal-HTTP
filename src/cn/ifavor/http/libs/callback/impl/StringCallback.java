@@ -1,4 +1,6 @@
-package cn.ifavor.http.libs.callback;
+package cn.ifavor.http.libs.callback.impl;
+
+import cn.ifavor.http.libs.callback.AbstractCallback;
 
 
 /**

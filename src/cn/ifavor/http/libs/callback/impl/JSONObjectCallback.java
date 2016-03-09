@@ -1,6 +1,8 @@
-package cn.ifavor.http.libs.callback;
+package cn.ifavor.http.libs.callback.impl;
 
 import org.json.JSONObject;
+
+import cn.ifavor.http.libs.callback.AbstractCallback;
 
 /**
  * Created by Administrator on 2016/2/29.

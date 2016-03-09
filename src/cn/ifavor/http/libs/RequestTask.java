@@ -2,6 +2,7 @@ package cn.ifavor.http.libs;
 
 import java.net.HttpURLConnection;
 
+import cn.ifavor.http.libs.exception.AppException;
 import cn.ifavor.http.libs.listener.OnProgressUpdateListener;
 
 import android.os.AsyncTask;
@@ -56,7 +57,7 @@ public class RequestTask extends AsyncTask<Void, Integer, Object> {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return e;
+			return new AppException(e.getMessage());
 		}
 	}
 
@@ -64,7 +65,7 @@ public class RequestTask extends AsyncTask<Void, Integer, Object> {
 	protected void onPostExecute(Object result) {
 		if (result instanceof Exception) {
 			// 失败
-			mRequest.getCallback().onFail((Exception) result);
+			mRequest.getCallback().onFail((AppException) result);
 		} else {
 			// 成功
 			// 说明：

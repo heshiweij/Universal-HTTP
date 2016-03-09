@@ -19,11 +19,12 @@ import cn.ifavor.http.libs.HttpUrlConnectionUtils;
 import cn.ifavor.http.libs.Request;
 import cn.ifavor.http.libs.RequestTask;
 import cn.ifavor.http.libs.Request.RequestMethod;
-import cn.ifavor.http.libs.callback.FileCallback;
 import cn.ifavor.http.libs.callback.ICallback;
-import cn.ifavor.http.libs.callback.JSONCallback;
-import cn.ifavor.http.libs.callback.JSONObjectCallback;
-import cn.ifavor.http.libs.callback.StringCallback;
+import cn.ifavor.http.libs.callback.impl.FileCallback;
+import cn.ifavor.http.libs.callback.impl.JSONCallback;
+import cn.ifavor.http.libs.callback.impl.JSONObjectCallback;
+import cn.ifavor.http.libs.callback.impl.StringCallback;
+import cn.ifavor.http.libs.exception.AppException;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -72,7 +74,8 @@ public class MainActivity extends Activity {
 //							onSubThreadStringCallback();
 //							onSubThreadJSONArrayCallback();
 //							onSubThreadProgressUpdate();
-							onSubThreadFillCallback();
+//							onSubThreadFillCallback();
+							onSubThreadAppException();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -176,7 +179,7 @@ public class MainActivity extends Activity {
 	}*/
 	
 	/** 测试 JsonCallback */
-	private void onSubThreadJsonCallback() {
+	/*private void onSubThreadJsonCallback() {
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("user-agent", "heshiwei");
 		headers.put("age", "0");
@@ -208,8 +211,10 @@ public class MainActivity extends Activity {
 		RequestTask task = new RequestTask(request);
 		task.execute();
 	}
+	*/
 	
 	/** 测试 StringCallback */
+	/*
 	private void onSubThreadStringCallback() {
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("user-agent", "heshiwei");
@@ -241,8 +246,10 @@ public class MainActivity extends Activity {
 		RequestTask task = new RequestTask(request);
 		task.execute();
 	}
+	*/
 	
 	/** 测试 StringCallback */
+	/*
 	private void onSubThreadJSONArrayCallback() {
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("user-agent", "heshiwei");
@@ -278,9 +285,10 @@ public class MainActivity extends Activity {
 		RequestTask task = new RequestTask(request);
 		task.execute();
 	}
-	
+	*/
 	
 	/** 测试 ProgressUpdate 进度更新 */
+	/*
 	private void onSubThreadProgressUpdate() {
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("user-agent", "heshiwei");
@@ -323,8 +331,10 @@ public class MainActivity extends Activity {
 		RequestTask task = new RequestTask(request);
 		task.execute();
 	}
+	*/
 	
 	/** 测试 FileCallback 和 文件下载进度更新 */
+	/*
 	private void onSubThreadFillCallback() {
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("user-agent", "heshiwei");
@@ -366,5 +376,30 @@ public class MainActivity extends Activity {
 		RequestTask task = new RequestTask(request);
 		task.execute();
 	}
+	*/
 	
+	private void onSubThreadAppException(){
+		Request request = new Request();
+		request.setUrl("sshttp://httpbin.org/get");
+		request.setMethod(RequestMethod.POST);
+		request.setEnableProgressUpdate(true);
+		
+		// 设置 callback
+		request.setCallback(new StringCallback() {
+			
+			@Override
+			public void onSuccess(String result) {
+				System.out.println("成功回调");
+			}
+			
+			@Override
+			public void onFail(AppException ex) {
+				System.out.println(ex.getMessage());
+			}
+		});
+		
+		// 执行请求
+		RequestTask task = new RequestTask(request);
+		task.execute();
+	}
 }

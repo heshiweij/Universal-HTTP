@@ -1,8 +1,10 @@
-package cn.ifavor.http.libs.callback;
+package cn.ifavor.http.libs.callback.impl;
 
 import java.io.StringReader;
 
 import org.xmlpull.v1.XmlPullParser;
+
+import cn.ifavor.http.libs.callback.AbstractCallback;
 
 import android.util.Xml;
 

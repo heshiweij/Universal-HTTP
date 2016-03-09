@@ -1,6 +1,8 @@
 package cn.ifavor.http.libs.callback;
 
 import java.net.HttpURLConnection;
+
+import cn.ifavor.http.libs.exception.AppException;
 import cn.ifavor.http.libs.listener.OnProgressUpdateListener;
 
 public interface ICallback<T> {
@@ -8,11 +10,11 @@ public interface ICallback<T> {
 	
 	void onSuccess(T result);
 	
-	void onFail(Exception ex);
+	void onFail(AppException ex);
 
-	T parse(HttpURLConnection connection) throws Exception;
+	T parse(HttpURLConnection connection) throws AppException;
 	
-	T parse(HttpURLConnection connection, OnProgressUpdateListener listener) throws Exception;
+	T parse(HttpURLConnection connection, OnProgressUpdateListener listener) throws AppException;
 	
 	void onProgress(int current, int total);
 }

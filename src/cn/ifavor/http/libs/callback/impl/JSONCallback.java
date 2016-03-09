@@ -1,8 +1,9 @@
-package cn.ifavor.http.libs.callback;
+package cn.ifavor.http.libs.callback.impl;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+import cn.ifavor.http.libs.callback.AbstractCallback;
 import cn.ifavor.http.libs.tools.JSONHelp;
 
 public abstract class JSONCallback<T> extends AbstractCallback<T>{
