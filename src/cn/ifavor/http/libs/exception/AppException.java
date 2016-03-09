@@ -3,8 +3,8 @@ package cn.ifavor.http.libs.exception;
 public class AppException extends Exception{
 	private static final long serialVersionUID = 1L;
 	
-	/** 异常类型枚举：超时、 服务器错误、客户端错误 */
-	public enum ExceptionType { TIMEOUT, SERVER, CLIENT }
+	/** 异常类型枚举：超时、 服务器错误、客户端错误、主动取消请求 */
+	public enum ExceptionType { TIMEOUT, SERVER, CLIENT , CANCEL}
 
 	/** 状态码 */
 	private int status;

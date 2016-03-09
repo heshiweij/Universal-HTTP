@@ -1,9 +1,11 @@
 package cn.ifavor.http;
 
-import android.app.Activity;
+import java.io.File;
+
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -12,14 +14,16 @@ import cn.ifavor.http.base.BaseActivity;
 import cn.ifavor.http.libs.Request;
 import cn.ifavor.http.libs.Request.RequestMethod;
 import cn.ifavor.http.libs.RequestTask;
+import cn.ifavor.http.libs.callback.impl.FileCallback;
 import cn.ifavor.http.libs.callback.impl.StringCallback;
 import cn.ifavor.http.libs.exception.AppException;
-import cn.ifavor.http.libs.listener.OnGlobalExceptionListener;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements OnClickListener {
 
 	private Button mBtnRequest;
 	private TextView mTvProgress;
+	private Button mBtnCancel;
+	private Request request;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +31,9 @@ public class MainActivity extends BaseActivity {
 		setContentView(R.layout.activity_main);
 
 		mTvProgress = (TextView) findViewById(R.id.tv_progress);
+		
+		mBtnCancel = (Button) findViewById(R.id.bt_cancel);
+		mBtnCancel.setOnClickListener(this);
 		
 		mBtnRequest = (Button) findViewById(R.id.bt_request);
 		mBtnRequest.setOnClickListener(new OnClickListener() {
@@ -55,7 +62,10 @@ public class MainActivity extends BaseActivity {
 //							onSubThreadFillCallback();
 //							onSubThreadAppException();
 //							onSubThreadonGlobalExceptionListener();
-							onSubThreadonRetryCount();
+//							onSubThreadonRetryCount();
+//							onSubThreadCancel();
+//							onSubThreadCancelLoadString();
+							onSubThreadCancelRetry();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -449,7 +459,7 @@ public class MainActivity extends BaseActivity {
 	}*/
 	
 	/** 测试 RetryCount Timeout 重试 */
-	private void onSubThreadonRetryCount(){
+	/*private void onSubThreadonRetryCount(){
 		Request request = new Request();
 		request.setUrl("http://httpbin.org/delay/10");
 		request.setMethod(RequestMethod.GET);
@@ -475,5 +485,117 @@ public class MainActivity extends BaseActivity {
 		// 执行请求
 		RequestTask task = new RequestTask(request);
 		task.execute();
+	}*/
+	
+	/** 测试 主动取消 下载大文件 */
+	private void onSubThreadCancelDownload(){
+		if (request == null){
+			request = new Request();
+		}
+		
+		request.setUrl("http://dlsw.baidu.com/sw-search-sp/soft/bf/35013/Baidu_Setup_2348_2.3.0.1694_10000010.1456900451.exe");
+		request.setMethod(RequestMethod.GET);
+		request.setEnableProgressUpdate(true);
+		
+		// 设置重试次数
+		request.setMaxRetryCount(3);
+		
+		File file = new File(Environment.getExternalStorageDirectory(), "baidu.exe");
+		
+		// 设置 callback
+		request.setCallback(new FileCallback(file) {
+			
+			@Override
+			public void onSuccess(File result) {
+				
+			}
+			
+			@Override
+			public void onFail(AppException ex) {
+				
+			}
+			
+			@Override
+			public void onProgress(int current, int total) {
+				System.out.println("进度更新执行...");
+				System.out.println(current + " : " + total);
+				mTvProgress.setText((current / (float)total) * 100 + "%");
+			}
+		});
+		
+		// 执行请求
+		RequestTask task = new RequestTask(request);
+		task.execute();
 	}
+
+	/** 测试主动取消 加载字符串  */
+	private void onSubThreadCancelLoadString(){
+		if (request == null){
+			request = new Request();
+		}
+		
+		request.setUrl("http://httpbin.org/get");
+		request.setMethod(RequestMethod.GET);
+		request.setEnableProgressUpdate(true);
+		
+		// 设置重试次数
+		request.setMaxRetryCount(0);
+		
+		// 设置 callback
+		request.setCallback(new StringCallback() {
+			
+			@Override
+			public void onSuccess(String result) {
+				System.out.println(result);
+			}
+			
+			@Override
+			public void onFail(AppException ex) {
+				
+			}
+		});
+		
+		// 执行请求
+		RequestTask task = new RequestTask(request);
+		task.execute();
+	}
+	
+	/** 测试主动取消 重试  */
+	private void onSubThreadCancelRetry(){
+		if (request == null){
+			request = new Request();
+		}
+		
+		request.setUrl("http://httpbin.org/delay/10");
+		request.setMethod(RequestMethod.GET);
+		request.setEnableProgressUpdate(true);
+		
+		// 设置重试次数
+		request.setMaxRetryCount(5);
+		
+		// 设置 callback
+		request.setCallback(new StringCallback() {
+			
+			@Override
+			public void onSuccess(String result) {
+				System.out.println(result);
+			}
+			
+			@Override
+			public void onFail(AppException ex) {
+				
+			}
+		});
+		
+		// 执行请求
+		RequestTask task = new RequestTask(request);
+		task.execute();
+	}
+	
+	@Override
+	public void onClick(View v) {
+		request.setCancel(true);
+	}
+	
+	
 }

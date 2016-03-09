@@ -34,6 +34,9 @@ public class Request {
 	
 	/** 重试次数，默认 3 */
 	private int maxRetryCount = 3;
+	
+	/** 是否取消 */
+	private boolean isCancel;
 
 	public Request() {
 		url = null;
@@ -125,4 +128,14 @@ public class Request {
 	public void setMaxRetryCount(int maxRetryCount) {
 		this.maxRetryCount = maxRetryCount;
 	}
+
+	public boolean isCancel() {
+		return isCancel;
+	}
+
+	public void setCancel(boolean isCancel) {
+		this.isCancel = isCancel;
+		callback.cancel();
+	}
+	
 }

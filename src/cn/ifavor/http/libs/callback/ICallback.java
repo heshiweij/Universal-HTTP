@@ -17,4 +17,6 @@ public interface ICallback<T> {
 	T parse(HttpURLConnection connection, OnProgressUpdateListener listener) throws AppException;
 	
 	void onProgress(int current, int total);
+
+	void cancel();
 }

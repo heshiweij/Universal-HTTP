@@ -26,6 +26,9 @@ public abstract class FileCallback extends AbstractCallback<File> {
 	public File parse(HttpURLConnection connection,
 			OnProgressUpdateListener listener) throws AppException {
 		
+		// 检查用户是否主动取消
+		checkIfCancel();
+		
 		try {
 			int statusCode = connection.getResponseCode();
 			if (statusCode == HttpUrlConnectionUtils.HTTP_STATUS_CODE_SUCCESS) {
@@ -33,12 +36,18 @@ public abstract class FileCallback extends AbstractCallback<File> {
 				int current = 0;
 				int total = connection.getContentLength();
 
+				// 检查用户是否主动取消
+				checkIfCancel();
+				
 				FileOutputStream fos = new FileOutputStream(mFile);
 				byte[] buffer = new byte[HttpUrlConnectionUtils.BUFFER_SIZE];
 				int len = 0;
 				while ((len = is.read(buffer)) != -1) {
 					fos.write(buffer, 0, len);
 
+					// 检查用户是否主动取消
+					checkIfCancel();
+					
 					current += len;
 
 					if (listener != null) {
@@ -51,6 +60,9 @@ public abstract class FileCallback extends AbstractCallback<File> {
 				fos.flush();
 				fos.close();
 
+				// 检查用户是否主动取消
+				checkIfCancel();
+				
 				return bindData(mFile.getAbsolutePath());
 			} else {
 				throw new AppException(connection.getResponseCode(),
@@ -64,6 +76,9 @@ public abstract class FileCallback extends AbstractCallback<File> {
 
 	@Override
 	public File bindData(String s) throws Exception {
+		// 检查用户是否主动取消
+		checkIfCancel();
+		
 		return mFile;
 	}
 

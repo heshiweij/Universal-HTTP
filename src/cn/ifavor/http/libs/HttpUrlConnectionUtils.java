@@ -17,6 +17,7 @@ import org.apache.http.client.utils.URIUtils;
 import android.text.TextUtils;
 import cn.ifavor.http.libs.Request.RequestMethod;
 import cn.ifavor.http.libs.exception.AppException;
+import cn.ifavor.http.libs.exception.AppException.ExceptionType;
 import cn.ifavor.http.libs.tools.URLUtil;
 
 public class HttpUrlConnectionUtils {
@@ -32,17 +33,21 @@ public class HttpUrlConnectionUtils {
 	/** HTTP 响应状态码-成功 */
 	public static final int HTTP_STATUS_CODE_SUCCESS = 200;
 
-	public static HttpURLConnection execute(Request request) throws AppException {
+	public static HttpURLConnection execute(Request request)
+			throws AppException {
 		if (request == null) {
-			throw new AppException(AppException.ExceptionType.SERVER, "请求对象不能为空");
+			throw new AppException(AppException.ExceptionType.SERVER,
+					"请求对象不能为空");
 		}
 
 		if (TextUtils.isEmpty(request.getUrl())) {
-			throw new AppException(AppException.ExceptionType.CLIENT, "请求URL不能为空");
+			throw new AppException(AppException.ExceptionType.CLIENT,
+					"请求URL不能为空");
 		}
-		
-		if (!URLUtil.isNetworkUrl(request.getUrl())){
-			throw new AppException(AppException.ExceptionType.CLIENT, request.getUrl() + "不是合法的 URL");
+
+		if (!URLUtil.isNetworkUrl(request.getUrl())) {
+			throw new AppException(AppException.ExceptionType.CLIENT,
+					request.getUrl() + "不是合法的 URL");
 		}
 
 		RequestMethod requestMethod = request.getMethod();
@@ -70,8 +75,14 @@ public class HttpUrlConnectionUtils {
 	 */
 	public static HttpURLConnection get(Request request) throws AppException {
 		try {
+			// 检查是否被取消
+			checkIfCancel(request);
+
 			URL url = new URL(request.getUrl());
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+			// 检查是否被取消
+			checkIfCancel(request);
 
 			conn.setRequestMethod("GET");
 			conn.setConnectTimeout(CONNTENT_TIME_SECONDS * 1000);
@@ -82,13 +93,25 @@ public class HttpUrlConnectionUtils {
 			// 添加头信息
 			addHeaders(request.getHeaders(), conn);
 
+			// 检查是否被取消
+			checkIfCancel(request);
 			return conn;
-		} catch (InterruptedIOException ex){
-			throw new AppException(AppException.ExceptionType.TIMEOUT, "ConnectTimeout 连接超时");
-			
+		} catch (InterruptedIOException ex) {
+			throw new AppException(AppException.ExceptionType.TIMEOUT,
+					"ConnectTimeout 连接超时");
+
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new AppException(AppException.ExceptionType.CLIENT, e.getMessage());
+			throw new AppException(AppException.ExceptionType.CLIENT,
+					e.getMessage());
+		}
+	}
+
+	/** 检查是否被取消 */
+	private static void checkIfCancel(Request request) throws AppException {
+		if (request.isCancel()) {
+			throw new AppException(ExceptionType.CANCEL,
+					"在 HttpURLConnection 处被用户主动取消");
 		}
 	}
 
@@ -128,9 +151,15 @@ public class HttpUrlConnectionUtils {
 	 */
 	public static HttpURLConnection post(Request request) throws AppException {
 		try {
+			// 检查是否被取消
+			checkIfCancel(request);
+			
 			URL url = new URL(request.getUrl());
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
+			// 检查是否被取消
+			checkIfCancel(request);			
+			
 			conn.setRequestMethod("POST");
 			conn.setConnectTimeout(CONNTENT_TIME_SECONDS * 1000);
 			conn.setReadTimeout(READ_TIME_SECONDS * 1000);
@@ -145,13 +174,18 @@ public class HttpUrlConnectionUtils {
 			// 添加报文内容
 			addContent(conn, request);
 
-			return conn;
-		}  catch (InterruptedIOException ex){
-			throw new AppException(AppException.ExceptionType.TIMEOUT, ex.getMessage());
+			// 检查是否被取消
+			checkIfCancel(request);
 			
+			return conn;
+		} catch (InterruptedIOException ex) {
+			throw new AppException(AppException.ExceptionType.TIMEOUT,
+					ex.getMessage());
+
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new AppException(AppException.ExceptionType.CLIENT, e.getMessage());
+			throw new AppException(AppException.ExceptionType.CLIENT,
+					e.getMessage());
 		}
 	}
 
@@ -171,4 +205,5 @@ public class HttpUrlConnectionUtils {
 		OutputStream os = conn.getOutputStream();
 		os.write(request.getContent().getBytes());
 	}
+
 }
