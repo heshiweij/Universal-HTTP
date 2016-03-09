@@ -58,7 +58,7 @@ public abstract class AbstractCallback<T> implements ICallback<T>{
 				}
 			} catch (InterruptedIOException ex){
 				ex.printStackTrace();
-				throw new AppException(AppException.ExceptionType.TIMEOUT, ex.getMessage());
+				throw new AppException(AppException.ExceptionType.TIMEOUT,"SocketTimeout Socket ∂¡»°≥¨ ±");
 			} 
 			catch (Exception e) {
 				e.printStackTrace();

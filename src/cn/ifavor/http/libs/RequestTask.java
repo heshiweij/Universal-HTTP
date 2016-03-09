@@ -95,6 +95,8 @@ public class RequestTask extends AsyncTask<Void, Integer, Object> {
 				if (!mRequest.getOnGlobalExceptionListener().handlerException((AppException) result)){
 					mRequest.getCallback().onFail((AppException) result);
 				}
+			} else {
+				mRequest.getCallback().onFail((AppException) result);
 			}
 			
 		} else {

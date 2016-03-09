@@ -451,12 +451,12 @@ public class MainActivity extends BaseActivity {
 	/** 测试 RetryCount Timeout 重试 */
 	private void onSubThreadonRetryCount(){
 		Request request = new Request();
-		request.setUrl("http://httpbin.org/get");
+		request.setUrl("http://httpbin.org/delay/10");
 		request.setMethod(RequestMethod.GET);
 		request.setEnableProgressUpdate(true);
 		
 		// 设置重试次数
-		request.setMaxRetryCount(5);
+		request.setMaxRetryCount(3);
 		
 		// 设置 callback
 		request.setCallback(new StringCallback() {

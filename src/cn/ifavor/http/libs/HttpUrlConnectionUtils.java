@@ -84,7 +84,7 @@ public class HttpUrlConnectionUtils {
 
 			return conn;
 		} catch (InterruptedIOException ex){
-			throw new AppException(AppException.ExceptionType.TIMEOUT, ex.getMessage());
+			throw new AppException(AppException.ExceptionType.TIMEOUT, "ConnectTimeout Á¬½Ó³¬Ê±");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
