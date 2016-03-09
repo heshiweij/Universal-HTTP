@@ -32,7 +32,6 @@ public abstract class FileCallback extends AbstractCallback<File> {
 				InputStream is = connection.getInputStream();
 				int current = 0;
 				int total = connection.getContentLength();
-				System.out.println("getContentLength: " + total);
 
 				FileOutputStream fos = new FileOutputStream(mFile);
 				byte[] buffer = new byte[HttpUrlConnectionUtils.BUFFER_SIZE];
@@ -59,7 +58,7 @@ public abstract class FileCallback extends AbstractCallback<File> {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new AppException(e.getMessage());
+			throw new AppException(AppException.ExceptionType.SERVER, e.getMessage());
 		}
 	}
 

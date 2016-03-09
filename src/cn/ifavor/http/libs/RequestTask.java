@@ -16,7 +16,11 @@ import android.os.AsyncTask;
  */
 public class RequestTask extends AsyncTask<Void, Integer, Object> {
 
+	/** 请求对象 */
 	private Request mRequest;
+	
+	/** 当前已重试的次数 */
+	private int retryCount = 0;
 
 	public RequestTask(Request request) {
 		if (request == null) {
@@ -39,6 +43,11 @@ public class RequestTask extends AsyncTask<Void, Integer, Object> {
 
 	@Override
 	protected Object doInBackground(Void... params) {
+		return request();
+	}
+
+	/** 执行具体的请求 */
+	private Object request(){
 		try {
 			HttpURLConnection connection = HttpUrlConnectionUtils
 					.execute(mRequest);
@@ -57,8 +66,21 @@ public class RequestTask extends AsyncTask<Void, Integer, Object> {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new AppException(e.getMessage());
-		}
+			if (e instanceof AppException ){
+				AppException appException = (AppException) e;
+				if (appException.getType() == AppException.ExceptionType.TIMEOUT){
+					
+					// Timeout 重试
+					if (retryCount < mRequest.getMaxRetryCount()){
+						retryCount++;
+						System.out.println("第 " + retryCount + " 次重试");
+						return request();
+					}
+				}
+			}
+			
+			return new AppException(AppException.ExceptionType.SERVER, e.getMessage());
+		} 
 	}
 
 	@Override

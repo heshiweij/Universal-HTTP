@@ -54,7 +54,8 @@ public class MainActivity extends BaseActivity {
 //							onSubThreadProgressUpdate();
 //							onSubThreadFillCallback();
 //							onSubThreadAppException();
-							onSubThreadonGlobalExceptionListener();
+//							onSubThreadonGlobalExceptionListener();
+							onSubThreadonRetryCount();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -358,6 +359,7 @@ public class MainActivity extends BaseActivity {
 	*/
 	
 	/** 测试 AppException */
+	/*
 	private void onSubThreadAppException(){
 		Request request = new Request();
 		request.setUrl("sshttp://httpbin.org/get");
@@ -383,7 +385,7 @@ public class MainActivity extends BaseActivity {
 		task.execute();
 	}
 	
-	/** 测试 onGlobalExceptionListener 全局异常 */
+	*//** 测试 onGlobalExceptionListener 全局异常 *//*
 	private void onSubThreadonGlobalExceptionListener(){
 		Request request = new Request();
 		request.setUrl("http://httpbin.org/get");
@@ -409,7 +411,7 @@ public class MainActivity extends BaseActivity {
 		// 执行请求
 		RequestTask task = new RequestTask(request);
 		task.execute();
-	}
+	}*/
 
 	@Override
 	public boolean handlerException(AppException ex) {
@@ -418,5 +420,60 @@ public class MainActivity extends BaseActivity {
 		AlertDialog create = builder.create();
 		create.show();
 		return false;
+	}
+	
+	/** 测试 AppException */
+	/*private void onSubThreadAppException(){
+		Request request = new Request();
+		request.setUrl("sshttp://httpbin.org/get");
+		request.setMethod(RequestMethod.POST);
+		request.setEnableProgressUpdate(true);
+		
+		// 设置 callback
+		request.setCallback(new StringCallback() {
+			
+			@Override
+			public void onSuccess(String result) {
+				System.out.println("成功回调");
+			}
+			
+			@Override
+			public void onFail(AppException ex) {
+				System.out.println(ex.getMessage());
+			}
+		});
+		
+		// 执行请求
+		RequestTask task = new RequestTask(request);
+		task.execute();
+	}*/
+	
+	/** 测试 RetryCount Timeout 重试 */
+	private void onSubThreadonRetryCount(){
+		Request request = new Request();
+		request.setUrl("http://httpbin.org/get");
+		request.setMethod(RequestMethod.GET);
+		request.setEnableProgressUpdate(true);
+		
+		// 设置重试次数
+		request.setMaxRetryCount(5);
+		
+		// 设置 callback
+		request.setCallback(new StringCallback() {
+			
+			@Override
+			public void onSuccess(String result) {
+				System.out.println("成功回调");
+			}
+			
+			@Override
+			public void onFail(AppException ex) {
+				System.out.println("onFail: "+ ex.getMessage());
+			}
+		});
+		
+		// 执行请求
+		RequestTask task = new RequestTask(request);
+		task.execute();
 	}
 }

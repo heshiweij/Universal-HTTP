@@ -31,6 +31,9 @@ public class Request {
 
 	/** 全局异常监听 */
 	private OnGlobalExceptionListener onGlobalExceptionListener;
+	
+	/** 重试次数，默认 3 */
+	private int maxRetryCount = 3;
 
 	public Request() {
 		url = null;
@@ -115,4 +118,11 @@ public class Request {
 		return onGlobalExceptionListener;
 	}
 
+	public int getMaxRetryCount() {
+		return maxRetryCount;
+	}
+
+	public void setMaxRetryCount(int maxRetryCount) {
+		this.maxRetryCount = maxRetryCount;
+	}
 }

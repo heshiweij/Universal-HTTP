@@ -1,6 +1,7 @@
 package cn.ifavor.http.libs;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -33,15 +34,15 @@ public class HttpUrlConnectionUtils {
 
 	public static HttpURLConnection execute(Request request) throws AppException {
 		if (request == null) {
-			throw new AppException("请求对象不能为空");
+			throw new AppException(AppException.ExceptionType.SERVER, "请求对象不能为空");
 		}
 
 		if (TextUtils.isEmpty(request.getUrl())) {
-			throw new AppException("请求URL不能为空");
+			throw new AppException(AppException.ExceptionType.CLIENT, "请求URL不能为空");
 		}
 		
 		if (!URLUtil.isNetworkUrl(request.getUrl())){
-			throw new AppException(request.getUrl() + "不是合法的 URL");
+			throw new AppException(AppException.ExceptionType.CLIENT, request.getUrl() + "不是合法的 URL");
 		}
 
 		RequestMethod requestMethod = request.getMethod();
@@ -82,9 +83,12 @@ public class HttpUrlConnectionUtils {
 			addHeaders(request.getHeaders(), conn);
 
 			return conn;
+		} catch (InterruptedIOException ex){
+			throw new AppException(AppException.ExceptionType.TIMEOUT, ex.getMessage());
+			
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new AppException(e.getMessage());
+			throw new AppException(AppException.ExceptionType.CLIENT, e.getMessage());
 		}
 	}
 
@@ -142,9 +146,12 @@ public class HttpUrlConnectionUtils {
 			addContent(conn, request);
 
 			return conn;
+		}  catch (InterruptedIOException ex){
+			throw new AppException(AppException.ExceptionType.TIMEOUT, ex.getMessage());
+			
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new AppException(e.getMessage());
+			throw new AppException(AppException.ExceptionType.CLIENT, e.getMessage());
 		}
 	}
 

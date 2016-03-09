@@ -3,6 +3,7 @@ package cn.ifavor.http.libs.callback;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.net.HttpURLConnection;
 
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -55,9 +56,13 @@ public abstract class AbstractCallback<T> implements ICallback<T>{
 					throw new AppException(connection.getResponseCode(),
 							connection.getResponseMessage());
 				}
-			} catch (Exception e) {
+			} catch (InterruptedIOException ex){
+				ex.printStackTrace();
+				throw new AppException(AppException.ExceptionType.TIMEOUT, ex.getMessage());
+			} 
+			catch (Exception e) {
 				e.printStackTrace();
-				throw new AppException(e.getMessage());
+				throw new AppException(AppException.ExceptionType.SERVER, e.getMessage());
 			}
 	}
 

@@ -2,17 +2,27 @@ package cn.ifavor.http.libs.exception;
 
 public class AppException extends Exception{
 	private static final long serialVersionUID = 1L;
+	
+	/** 异常类型枚举：超时、 服务器错误、客户端错误 */
+	public enum ExceptionType { TIMEOUT, SERVER, CLIENT }
 
 	/** 状态码 */
 	private int status;
 	
-	public AppException(String responseMessage){
+	/** 异常类型 */
+	private ExceptionType type;
+	
+	public AppException(ExceptionType type, String responseMessage){
 		super(responseMessage);
+		
+		this.type = type;
 	}
 	
 	public AppException(int status, String responseMessage) {
 		super(responseMessage);
 		this.status = status;
+		
+		type = ExceptionType.SERVER; 
 	}
 
 	public int getStatus() {
@@ -21,6 +31,14 @@ public class AppException extends Exception{
 
 	public void setStatus(int status) {
 		this.status = status;
+	}
+
+	public ExceptionType getType() {
+		return type;
+	}
+
+	public void setType(ExceptionType type) {
+		this.type = type;
 	}
 
 }
