@@ -1,8 +1,6 @@
 package cn.ifavor.http.libs;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -11,9 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import cn.ifavor.http.libs.Request.RequestMethod;
-
 import android.text.TextUtils;
+import cn.ifavor.http.libs.Request.RequestMethod;
 
 public class HttpUrlConnectionUtils {
 	/** 连接超时时间(秒) */

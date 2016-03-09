@@ -9,6 +9,10 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONObject;
+
+import com.google.gson.JsonObject;
+
 import cn.ifavor.http.bean.User;
 import cn.ifavor.http.libs.HttpUrlConnectionUtils;
 import cn.ifavor.http.libs.Request;
@@ -16,6 +20,8 @@ import cn.ifavor.http.libs.RequestTask;
 import cn.ifavor.http.libs.Request.RequestMethod;
 import cn.ifavor.http.libs.callback.ICallback;
 import cn.ifavor.http.libs.callback.JSONCallback;
+import cn.ifavor.http.libs.callback.JSONObjectCallback;
+import cn.ifavor.http.libs.callback.StringCallback;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -55,7 +61,9 @@ public class MainActivity extends Activity {
 						
 						try {
 //							onSubThreadExecute();
-							onSubThreadJsonCallback();
+//							onSubThreadJsonCallback();
+//							onSubThreadStringCallback();
+							onSubThreadJSONArrayCallback();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -158,6 +166,7 @@ public class MainActivity extends Activity {
 		task.execute();
 	}*/
 	
+	/** ≤‚ ‘ JsonCallback */
 	private void onSubThreadJsonCallback() {
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("user-agent", "heshiwei");
@@ -184,6 +193,76 @@ public class MainActivity extends Activity {
 				System.out.println(ex.getMessage());
 			}
 			
+		});
+		
+		// ÷¥––«Î«Û
+		RequestTask task = new RequestTask(request);
+		task.execute();
+	}
+	
+	/** ≤‚ ‘ StringCallback */
+	private void onSubThreadStringCallback() {
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("user-agent", "heshiwei");
+		headers.put("age", "0");
+		headers.put("Content-Type", "application/json");
+		String content = "{\"name\":\"hsw\"}";
+		
+		Request request = new Request();
+		request.setUrl("http://httpbin.org/post");
+		request.setMethod(RequestMethod.POST);
+		request.setHeaders(headers);
+		request.setContent(content);
+		
+		// …Ë÷√ callback
+		request.setCallback(new StringCallback() {
+			
+			@Override
+			public void onSuccess(String result) {
+				System.out.println(result);
+			}
+			
+			@Override
+			public void onFail(Exception ex) {
+				System.out.println(ex.getMessage());
+			}
+		});
+		
+		// ÷¥––«Î«Û
+		RequestTask task = new RequestTask(request);
+		task.execute();
+	}
+	
+	/** ≤‚ ‘ StringCallback */
+	private void onSubThreadJSONArrayCallback() {
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("user-agent", "heshiwei");
+		headers.put("age", "0");
+		headers.put("Content-Type", "application/json");
+		String content = "{\"name\":\"hsw\"}";
+		
+		Request request = new Request();
+		request.setUrl("http://httpbin.org/post");
+		request.setMethod(RequestMethod.POST);
+		request.setHeaders(headers);
+		request.setContent(content);
+		
+		// …Ë÷√ callback
+		request.setCallback(new JSONObjectCallback() {
+			
+			@Override
+			public void onSuccess(JSONObject result) {
+				String origin = result.optString("origin");
+				String url = result.optString("url");
+				
+				System.out.println("origin:"+origin);
+				System.out.println("url:"+url);
+			}
+			
+			@Override
+			public void onFail(Exception ex) {
+				System.out.println(ex.getMessage());
+			}
 		});
 		
 		// ÷¥––«Î«Û
