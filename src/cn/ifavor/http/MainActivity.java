@@ -13,6 +13,7 @@ import android.widget.TextView;
 import cn.ifavor.http.base.BaseActivity;
 import cn.ifavor.http.libs.Request;
 import cn.ifavor.http.libs.Request.RequestMethod;
+import cn.ifavor.http.libs.RequestManager;
 import cn.ifavor.http.libs.RequestTask;
 import cn.ifavor.http.libs.callback.impl.FileCallback;
 import cn.ifavor.http.libs.callback.impl.StringCallback;
@@ -24,6 +25,7 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 	private TextView mTvProgress;
 	private Button mBtnCancel;
 	private Request request;
+	private RequestManager manager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +67,8 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 //							onSubThreadonRetryCount();
 //							onSubThreadCancel();
 //							onSubThreadCancelLoadString();
-							onSubThreadCancelRetry();
+//							onSubThreadCancelRetry();
+							onSubThreadTextRequestManager();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -590,12 +593,43 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 		// 执行请求
 		RequestTask task = new RequestTask(request);
 		task.execute();
+		
 	}
 	
 	@Override
 	public void onClick(View v) {
-		request.setCancel(true);
+//		request.setCancel(true);
+		if (manager != null){
+			manager.cancelRequest("main");
+		}
 	}
 	
-	
+	private void onSubThreadTextRequestManager() {
+		request = new Request();
+		
+		request.setUrl("http://httpbin.org/get");
+		request.setMethod(RequestMethod.GET);
+		request.setEnableProgressUpdate(true);
+		
+		// 设置重试次数
+		request.setMaxRetryCount(0);
+		request.setTag("main");
+		
+		// 设置 callback
+		request.setCallback(new StringCallback() {
+			
+			@Override
+			public void onSuccess(String result) {
+				System.out.println(result);
+			}
+			
+			@Override
+			public void onFail(AppException ex) {
+				
+			}
+		});
+
+		manager = RequestManager.getInstance();
+		manager.performRequest(request);
+	}
 }

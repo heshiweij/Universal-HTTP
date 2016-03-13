@@ -38,6 +38,9 @@ public class Request {
 	/** 是否取消 */
 	private boolean isCancel;
 
+	/** 取消请求的标记 */
+	private Object tag;
+	
 	public Request() {
 		url = null;
 		method = RequestMethod.GET;
@@ -136,6 +139,14 @@ public class Request {
 	public void setCancel(boolean isCancel) {
 		this.isCancel = isCancel;
 		callback.cancel();
+	}
+
+	public Object getTag() {
+		return tag;
+	}
+
+	public void setTag(Object tag) {
+		this.tag = tag;
 	}
 	
 }
