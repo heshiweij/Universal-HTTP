@@ -68,7 +68,8 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 //							onSubThreadCancel();
 //							onSubThreadCancelLoadString();
 //							onSubThreadCancelRetry();
-							onSubThreadTextRequestManager();
+//							onSubThreadTextRequestManager();
+							onSubThreadRequestHttps();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -608,6 +609,35 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 		request = new Request();
 		
 		request.setUrl("http://httpbin.org/get");
+		request.setMethod(RequestMethod.GET);
+		request.setEnableProgressUpdate(true);
+		
+		// 设置重试次数
+		request.setMaxRetryCount(0);
+		request.setTag("main");
+		
+		// 设置 callback
+		request.setCallback(new StringCallback() {
+			
+			@Override
+			public void onSuccess(String result) {
+				System.out.println(result);
+			}
+			
+			@Override
+			public void onFail(AppException ex) {
+				
+			}
+		});
+
+		manager = RequestManager.getInstance();
+		manager.performRequest(request);
+	}
+	
+	private void onSubThreadRequestHttps(){
+request = new Request();
+		
+		request.setUrl("https://httpbin.org/get");
 		request.setMethod(RequestMethod.GET);
 		request.setEnableProgressUpdate(true);
 		
